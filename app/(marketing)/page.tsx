@@ -2,7 +2,6 @@
 
 import { useCallback } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -27,9 +26,6 @@ export default function LandingPage() {
           </h2>
         </div>
         <div className="flex flex-col justify-between md:h-96 items-center">
-          <Button variant="secondary" className="mt-6" size="lg" asChild>
-            <Link href="/sign-up">Continue ahead</Link>
-          </Button>
           <Button
             variant="ghost"
             size="icon"

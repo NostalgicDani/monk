@@ -1,13 +1,17 @@
+import { ArchiveBanner } from "@/components/archive-banner";
 import { Footer } from "./_components/footer";
 import { Navbar } from "./_components/navbar";
 
 const LandingLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <>
-      <Navbar />
-      <main className="pt-24 pb-20">{children}</main>
+    <div className="flex min-h-screen flex-col">
+      <div className="fixed top-0 z-40 w-full">
+        <ArchiveBanner />
+        <Navbar />
+      </div>
+      <main className="flex-1 pt-40 pb-12">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 };
 

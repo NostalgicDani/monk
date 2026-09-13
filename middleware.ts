@@ -1,41 +1,18 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/tos",
-  "/policy",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/demo",
-  "/about",
-  "/api/webhook",
-]);
+// Monk is archived and no longer maintained.
+// Only the marketing pages stay reachable. Sign-in, the app itself, and
+// all API routes are dead. Nothing here should ever hit Clerk or the DB.
+const isAllowedRoute = (pathname: string) =>
+  ["/", "/tos", "/policy", "/about"].includes(pathname);
 
-const isMarketingRoute = createRouteMatcher(["/tos", "/about", "/policy"]);
-
-export default clerkMiddleware((auth, req) => {
- 
-  if (auth().userId && isPublicRoute(req) && !isMarketingRoute(req)) {
-    let path = "/select-org";
-    
-    if (auth().orgId)
-      path = `/organization/${auth().orgId}`
-
-    const orgSelection = new URL(path, req.url)
-    return NextResponse.redirect(orgSelection);
+export default function middleware(req: NextRequest) {
+  if (isAllowedRoute(req.nextUrl.pathname)) {
+    return NextResponse.next();
   }
-
-  if(!auth().userId && !isPublicRoute(req)) //user not signed and trying to access protected route
-    return auth().redirectToSignIn({ returnBackUrl: req.url });
-  
-  if (auth().userId && !auth().orgId && req.nextUrl.pathname !== "/select-org"){ //user logged in w/o org
-    const orgSelection = new URL("/select-org", req.url);
-    return NextResponse.redirect(orgSelection);
-  }
-});
+  return NextResponse.redirect(new URL("/", req.url));
+}
 
 export const config = {
   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 };
-
